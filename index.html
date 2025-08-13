@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Every SSN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -47,6 +48,7 @@
       header {
         display: flex;
         margin: 0 15px;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
       }
@@ -54,6 +56,7 @@
       search {
         display: flex;
         align-items: center;
+        margin-bottom: 15px;
       }
 
       button {
@@ -67,7 +70,6 @@
         text-align: center;
         align-content: center;
         height: 100%;
-        line-height: 50px;
       }
 
       .vrow {
@@ -95,12 +97,12 @@
     </header>
     <main></main>
     <aside style="display: none">
-      Oops :( You shouldn't enter your private information into an unfamiliar
-      site!
-      <br />
-      Even what you type can be tracked by the site owner.
-      <br />
-      This is just a friendly warning. Stay safe!
+      <p>
+        Oops :( You shouldn't enter your private information into an unfamiliar
+        site!
+      </p>
+      <p>Even what you type can be tracked by the site owner.</p>
+      <p>This is just a friendly warning. Stay safe!</p>
     </aside>
 
     <script>
