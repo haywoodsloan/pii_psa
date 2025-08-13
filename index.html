@@ -126,6 +126,7 @@
 
       const maxCount = 1_000_000_000;
       let currentCount = 10_000;
+      let updatePending = false;
 
       const idxMap = [];
       const usedIdx = new Set();
@@ -164,9 +165,16 @@
             const newCount = Math.min(currentCount * 1.01, maxCount);
             if (newCount > currentCount) {
               currentCount = newCount;
-              requestAnimationFrame(() =>
-                list?.refresh(main, { total: Math.ceil(currentCount / perRow) })
-              );
+              if (!updatePending) {
+                updatePending = true;
+                requestAnimationFrame(() => {
+                  list?.refresh(main, {
+                    total: Math.ceil(currentCount / perRow),
+                  });
+                  
+                  updatePending = false;
+                });
+              }
             }
           }
 
@@ -175,13 +183,20 @@
       });
 
       window.onresize = () => {
-        perRow = Math.floor(
-          (window.innerWidth - leftPad) / (textWidth + colGap)
-        );
+        if (!updatePending) {
+          updatePending = true;
+          requestAnimationFrame(() => {
+            perRow = Math.floor(
+              (window.innerWidth - leftPad) / (textWidth + colGap)
+            );
 
-        requestAnimationFrame(() =>
-          list?.refresh(main, { total: Math.ceil(maxCount / perRow) })
-        );
+            list?.refresh(main, {
+              total: Math.ceil(maxCount / perRow),
+            });
+
+            updatePending = false;
+          });
+        }
       };
 
       function trigger() {
