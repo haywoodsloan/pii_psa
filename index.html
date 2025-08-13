@@ -24,6 +24,15 @@
         color: red;
       }
 
+      h1,
+      h2 {
+        margin: 0;
+      }
+
+      h1 {
+        margin-bottom: 10px;
+      }
+
       label {
         font-style: italic;
         font-size: 20px;
@@ -47,16 +56,16 @@
 
       header {
         display: flex;
-        margin: 0 15px;
+        margin: 15px;
         flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
+        row-gap: 15px;
       }
 
       search {
         display: flex;
         align-items: center;
-        margin-bottom: 15px;
       }
 
       button {
@@ -170,7 +179,9 @@
           (window.innerWidth - leftPad) / (textWidth + colGap)
         );
 
-        list?.refresh(main, { total: Math.ceil(maxCount / perRow) });
+        requestAnimationFrame(() =>
+          list?.refresh(main, { total: Math.ceil(maxCount / perRow) })
+        );
       };
 
       function trigger() {
