@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Every SSN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/hyperlist@1.0.0/dist/hyperlist.min.js"></script>
+    <style>
+      * {
+        font-family: 'Roboto', sans-serif;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        color: red;
+      }
+
+      label {
+        font-style: italic;
+        font-size: 20px;
+      }
+
+      input {
+        font-size: 15px;
+        margin-left: 5px;
+      }
+
+      input:focus {
+        outline: rgb(143, 255, 255) solid 3px;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        background-color: black;
+        color: white;
+      }
+
+      header {
+        display: flex;
+        margin: 0 15px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      search {
+        display: flex;
+        align-items: center;
+      }
+
+      button {
+        margin-left: 15px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      aside {
+        font-size: 28px;
+        text-align: center;
+        align-content: center;
+        height: 100%;
+        line-height: 50px;
+      }
+
+      .vrow {
+        display: flex;
+        justify-content: space-between;
+        width: calc(100% - 30px);
+        column-gap: 15px;
+        padding-left: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Every Social Security Number</h1>
+        <h2>Equifax ain't got nothing on me!</h2>
+      </div>
+      <search>
+        <label>
+          Check for your SSN:
+          <input type="password" maxlength="9" size="9" oninput="ssnInput()" />
+        </label>
+        <button onclick="trigger()">SEARCH</button>
+      </search>
+    </header>
+    <main></main>
+    <aside style="display: none">
+      Oops :( You shouldn't enter your private information into an unfamiliar
+      site!
+      <br />
+      Even what you type can be tracked by the site owner.
+      <br />
+      This is just a friendly warning. Stay safe!
+    </aside>
+
+    <script>
+      const [main] = document.getElementsByTagName('main');
+      const [header] = document.getElementsByTagName('header');
+      const [aside] = document.getElementsByTagName('aside');
+      const [input] = document.getElementsByTagName('input');
+
+      const textWidth = 90;
+      const colGap = 15;
+      const leftPad = 15;
+
+      const maxCount = 1_000_000_000;
+      let currentCount = 10_000;
+
+      const idxMap = [];
+      const usedIdx = new Set();
+
+      let perRow = Math.floor(
+        (window.innerWidth - leftPad) / (textWidth + colGap)
+      );
+
+      const list = HyperList.create(main, {
+        itemHeight: 20,
+        total: Math.ceil(currentCount / perRow),
+
+        generate(idx) {
+          const row = document.createElement('div');
+          for (let num = idx * perRow; num < (idx + 1) * perRow; num++) {
+            let randIdx = idxMap[num];
+            if (isNaN(randIdx)) {
+              do {
+                randIdx = Math.floor(Math.random() * (maxCount + 1));
+              } while (usedIdx.has(randIdx));
+
+              usedIdx.add(randIdx);
+              idxMap[num] = randIdx;
+            }
+
+            let str = String(randIdx).padStart(9, '0');
+            str = `${str.slice(0, 3)}-${str.slice(3, 5)}-${str.slice(5)}`;
+
+            const span = document.createElement('span');
+            span.textContent = str;
+
+            row.append(span);
+          }
+
+          if ((idx + 1) * perRow >= currentCount) {
+            const newCount = Math.min(currentCount * 1.01, maxCount);
+            if (newCount > currentCount) {
+              currentCount = newCount;
+              requestAnimationFrame(() =>
+                list?.refresh(main, { total: Math.ceil(currentCount / perRow) })
+              );
+            }
+          }
+
+          return row;
+        },
+      });
+
+      window.onresize = () => {
+        perRow = Math.floor(
+          (window.innerWidth - leftPad) / (textWidth + colGap)
+        );
+
+        list?.refresh(main, { total: Math.ceil(maxCount / perRow) });
+      };
+
+      function trigger() {
+        main.style.display = 'none';
+        header.style.display = 'none';
+        aside.style.display = null;
+      }
+
+      function ssnInput() {
+        const newVal = input.value.replace(/[- ]/g, '');
+        if (newVal !== input.value) {
+          input.value = newVal;
+        }
+
+        if (input.value.length >= 9) {
+          trigger();
+        }
+      }
+
+      window.addEventListener('keydown', (event) => {
+        if (
+          (event.ctrlKey || event.metaKey) &&
+          (event.key === 'f' || event.key === 'F')
+        ) {
+          input.focus();
+          event.preventDefault();
+        }
+      });
+    </script>
+  </body>
+</html>
