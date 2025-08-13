@@ -168,11 +168,10 @@
               if (!updatePending) {
                 updatePending = true;
                 requestAnimationFrame(() => {
+                  updatePending = false;
                   list?.refresh(main, {
                     total: Math.ceil(currentCount / perRow),
                   });
-                  
-                  updatePending = false;
                 });
               }
             }
@@ -183,18 +182,17 @@
       });
 
       window.onresize = () => {
+        perRow = Math.floor(
+          (window.innerWidth - leftPad) / (textWidth + colGap)
+        );
+
         if (!updatePending) {
           updatePending = true;
           requestAnimationFrame(() => {
-            perRow = Math.floor(
-              (window.innerWidth - leftPad) / (textWidth + colGap)
-            );
-
+            updatePending = false;
             list?.refresh(main, {
               total: Math.ceil(maxCount / perRow),
             });
-
-            updatePending = false;
           });
         }
       };
