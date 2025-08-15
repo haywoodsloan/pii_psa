@@ -132,7 +132,7 @@
       const usedIdx = new Set();
 
       let perRow = Math.floor(
-        (window.innerWidth - leftPad) / (textWidth + colGap)
+        (main.clientWidth - leftPad) / (textWidth + colGap)
       );
 
       const list = HyperList.create(main, {
@@ -183,7 +183,7 @@
 
       window.onresize = () => {
         perRow = Math.floor(
-          (window.innerWidth - leftPad) / (textWidth + colGap)
+          (main.clientWidth - leftPad) / (textWidth + colGap)
         );
 
         if (!updatePending) {
@@ -191,7 +191,7 @@
           requestAnimationFrame(() => {
             updatePending = false;
             list?.refresh(main, {
-              total: Math.ceil(maxCount / perRow),
+              total: Math.ceil(currentCount / perRow),
             });
           });
         }
